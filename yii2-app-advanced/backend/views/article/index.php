@@ -29,8 +29,8 @@
             <td><?= date('Y-m-d H:i:s',$user->inputtime)  ?></td>
 
             <td><?php
-                echo   \yii\bootstrap\Html::a("编辑",['article/edit','id'=>$user->id],['class'=>'btn btn-info']);
-                echo   \yii\bootstrap\Html::a("删除",['article/del','id'=>$user->id],['class'=>'btn btn-danger']);
+                echo   \yii\bootstrap\Html::a("编辑",['article/edit','id'=>$user->id,'article_id'=>$user->id],['class'=>'btn btn-info']);
+                echo   \yii\bootstrap\Html::a("删除",['article/del','id'=>$user->id,'article_id'=>$user->id],['class'=>'btn btn-danger']);
 
                 ?> </td>
         </tr>

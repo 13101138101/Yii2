@@ -73,11 +73,11 @@ class ArticleController extends Controller
     }
 
     //编辑
-    public function actionEdit($id){
+    public function actionEdit($id,$article_id){
 
         $model=Article::findOne($id);
 
-        $detail=ArticleDetail::findOne($id);
+        $detail=ArticleDetail::findOne($article_id);
 
         $request=\Yii::$app->request;
 
@@ -85,12 +85,15 @@ class ArticleController extends Controller
 
             if($model->load($request->post())&&$model->validate()){
 
-                $model->inputtime=time();
-
+//                $model->inputtime=time();
 
                 $model->save();
 
+                $detail->load($request->post());
+//        var_dump($request->post());exit;
+                $detail->save();
                 $session=\Yii::$app->session;
+
                 $session->setFlash('success',"修改成功");
 
                 return $this->redirect('index');
