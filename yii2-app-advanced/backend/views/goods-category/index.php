@@ -7,37 +7,16 @@
         <th>操作</th>
     </tr>
 
-    <td><?=
-        \liyuze\ztree\ZTree::widget([
-            'setting' => '{
-            callback:{
-                   onClick:function(event, treeId, treeNode){
-           
-                   $("#goodscategory-parent_id").val(treeNode.id);
-                   }
-            },
-     
-			data: {
-				simpleData: {
-					enable: true,
-					idKey:"id",
-					pIdKey:"parent_id",
-					rootPId:0
-				}
-			}
-		}',
-            'nodes' => $users
-        ]);
-        ?></td>
+
 
     <?php  foreach ($users as $user): ?>
         <tr>
             <td><?= $user->id ?></td>
-
+            <td><?= $user->name?></td>
             <td><?= $user->intro ?></td>
             <td><?php
-                echo   \yii\bootstrap\Html::a("编辑",['article-category/edit','id'=>$user->id],['class'=>'btn btn-info']);
-                echo   \yii\bootstrap\Html::a("删除",['article-category/del','id'=>$user->id],['class'=>'btn btn-danger']);
+                echo   \yii\bootstrap\Html::a("编辑",['goods-category/edit','id'=>$user->id],['class'=>'btn btn-info']);
+                echo   \yii\bootstrap\Html::a("删除",['goods-category/del','id'=>$user->id],['class'=>'btn btn-danger']);
 
                 ?> </td>
         </tr>

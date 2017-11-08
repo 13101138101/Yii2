@@ -21,11 +21,17 @@ public $imgFile;
              [['intro'], 'string'],
              [['sort', 'status'], 'integer'],
              [['name'], 'string', 'max' => 30],
-
-             [['imgFile'],'file','extensions' => ['gif','png','jpg'],'skipOnEmpty' => true],
-
-
+             [['logo'],'string'],
+//             [['imgFile'],'file','extensions' => ['gif','png','jpg'],'skipOnEmpty' => true],
          ];
      }
 
+    public function getNameText()
+    {
+        if(substr($this->logo,0,7)=='http://'){
+            return $this->logo;
+        }else{
+            return "@web/".$this->logo;
+        }
+    }
 }

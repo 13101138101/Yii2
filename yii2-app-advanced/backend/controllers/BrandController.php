@@ -3,10 +3,11 @@
 namespace backend\controllers;
 
 use backend\models\Brand;
+use common\components\Upload;
 use yii\data\Pagination;
 use yii\web\Controller;
 use yii\web\UploadedFile;
-
+use flyok666\qiniu\Qiniu;
 
 class BrandController extends Controller
 {
@@ -51,11 +52,43 @@ class BrandController extends Controller
         return $this->render('index',['users'=>$users,'page'=>$page]);
     }
 
+
+
     //添加信息
 
     /**
      * @return string
      */
+    public function actionUpload(){
+
+     //上传图片配置配置
+        $config = [
+            'accessKey'=>'gch1TZjeRAG5E1MEcytHCtM2dBfy1t085UyfZTuV',//ak
+            'secretKey'=>'wNywXo8zJcQGN8zgAWyOYiXggO-REC_0TrPdoUOA',//sk
+            'domain'=>'http://oz1dxim9q.bkt.clouddn.com/',//域名
+            'bucket'=>'wanghao',//空间名称
+            'area'=>Qiniu::AREA_HUANAN//区域
+        ];
+
+    //实例化对象
+        $qiniu = new Qiniu($config);
+        $key = time();
+        //调用上传方法
+        $qiniu->uploadFile($_FILES['file']['tmp_name'],$key);
+        $url = $qiniu->getLink($key);
+
+        $info=[
+            'code'=>0,
+            'url'=>$url,
+            'attachment'=>$url,
+        ];
+      return  json_encode($info);
+
+    }
+
+
+
+
     public function actionAdd(){
          $model=new Brand();
 
@@ -64,19 +97,19 @@ class BrandController extends Controller
          if($request->isPost){
 
              if($model->load($request->post())){
-                 $model->imgFile=UploadedFile::getInstance($model,'imgFile');
+//                 $model->imgFile=UploadedFile::getInstance($model,'imgFile');
 
                  if($model->validate()){
 
                     if ($model->imgFile) {
 
-                       $filePath = "images/" . time() . "." . $model->imgFile->extension;
+//                       $filePath = "images/" . time() . "." . $model->imgFile->extension;
 
-                         $filePath="images/".time().".".$model->imgFile->extension;
+//                         $filePath="images/".time().".".$model->imgFile->extension;
 
-                         $model->imgFile->saveAs($filePath, false);
+//                         $model->imgFile->saveAs($filePath, false);
 
-                         $model->logo= $filePath;
+//                         $model->logo= $filePath;
                      }
                      $model->save(false);
 
@@ -103,19 +136,19 @@ class BrandController extends Controller
         if($request->isPost){
 
             if($model->load($request->post())){
-                $model->imgFile=UploadedFile::getInstance($model,'imgFile');
+//                $model->imgFile=UploadedFile::getInstance($model,'imgFile');
 
                 if($model->validate()){
 
                     if ($model->imgFile) {
 
-                        $filePath = "images/" . time() . "." . $model->imgFile->extension;
+//                        $filePath = "images/" . time() . "." . $model->imgFile->extension;
 
-                        $filePath="images/".time().".".$model->imgFile->extension;
+//                        $filePath="images/".time().".".$model->imgFile->extension;
 
-                        $model->imgFile->saveAs($filePath, false);
+//                        $model->imgFile->saveAs( false);
 
-                        $model->logo= $filePath;
+//                        $model->logo= $filePath;
                     }
                     $model->save(false);
 

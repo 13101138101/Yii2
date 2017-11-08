@@ -15,8 +15,7 @@
             <td><?= $user->name ?></td>
             <td><?= $user->intro ?></td>
             <td><?php
-               $prc="@web/".$user->logo;
-                echo  \yii\helpers\Html::img($prc,['width'=>'80px']);
+                echo  \yii\helpers\Html::img($user->logo,['width'=>'80px']);
                 ?></td>
             <td><?= ($user->status==0)?"隐藏":"显示"; ?></td>
             <td><?php
