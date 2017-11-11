@@ -36,15 +36,12 @@ class BrandController extends Controller
     {
 
         $count = Brand::find()->count();
-
         $pageSize = 8;
-
         $page = new Pagination(
             [
                 'pageSize'=>$pageSize,
                 'totalCount'=>$count,
             ]
-
         );
 
         $users=Brand::find()->limit($page->limit)->offset($page->offset)->all();

@@ -16,9 +16,10 @@ echo $form->field($gallery,'imgFile')->widget('manks\FileInput', [
         'pick' => [
             'multiple' => true,
         ]]
-    
+
 ]);
-echo $form->field($intro,'content')->textarea(['rows'=>6]);
+//echo $form->field($intro,'content')->textarea(['rows'=>6]);
+echo $form->field($intro,'content')->widget('kucha\ueditor\UEditor',[]);
 
 echo   \yii\bootstrap\Html::submitButton("提交",['class'=>'btn btn-success']);
 yii\bootstrap\ActiveForm::end();

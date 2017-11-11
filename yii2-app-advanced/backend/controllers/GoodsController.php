@@ -15,7 +15,9 @@ use backend\models\GoodsCategory;
 use backend\models\GoodsDayCount;
 use backend\models\GoodsGallery;
 use backend\models\GoodsIntro;
+use Faker\Provider\ro_RO\Person;
 use yii\base\Controller;
+use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 
 class GoodsController extends \yii\web\Controller
@@ -23,71 +25,104 @@ class GoodsController extends \yii\web\Controller
     //显示
     public function actionIndex()
     {
-        $users = Goods::find()->all();
-//    var_dump($users);exit;
-        return $this->render('index', ['users' => $users]);
+        //查询
+        //查询对象
+       $query=Goods::find();
+
+
+        //接手参数
+       $request=\Yii::$app->request;
+       $keyword=$request->get('keyword');
+       $minPrice=$request->get('minPrice');
+       $maxPrice=$request->get('maxPrice');
+//        var_dump($keyword,$minPrice,$maxPrice);exit;
+       if($minPrice>0){
+
+           $query->andWhere("shop_price >={$minPrice}");
+       }
+
+
+       if($maxPrice>0){
+
+           $query->andWhere("shop_price <= {$maxPrice}");
+       }
+
+       if(isset($keyword)){
+           $query->andWhere("name like '%{$keyword}%' or sn like '%{$keyword}%'");
+       }
+
+        $count = $query->count();
+        $pageSize = 1;
+        $page = new Pagination(
+            [
+                'pageSize'=>$pageSize,
+                'totalCount'=>$count,
+            ]
+        );
+
+        $users=$query->limit($page->limit)->offset($page->offset)->all();
+//        var_dump($users);exit;
+
+        return $this->render('index', ['users' => $users,'page'=>$page]);
     }
 
     //添加商品
     public function actionAdd()
     {
         $model = new Goods();
-
         $gallery = new GoodsGallery();
-
         $intro = new GoodsIntro();
 
 
         //查出商品的分类
         $goods = GoodsCategory::find()->all();
-
         $options = ArrayHelper::map($goods, 'id', 'name');
-
         $time = date("Ymd", time());
 
         //查出每天添加商品的条数
         $count = GoodsDayCount::findOne($time);
-
         $request = \Yii::$app->request;
 
 //        var_dump($request);exit;
         //查出所有品牌
         $brands = Brand::find()->all();
-
         $brand = ArrayHelper::map($brands, 'id', 'name');
 
         if ($request->isPost) {
-
             if ($model->load($request->post()) && $model->validate()) {
 
                 $model->sn = $time . $count->count;
-
                 $model->inputtime = time();
-
                 $model->save();
 
                 if ($intro->load($request->post())) {
-
                     //保存描述
                     $intro->goods_id = $model->id;
                     $intro->save();
 
                     if ($gallery->load($request->post())) {
-
-
                         //保存图片
                         foreach ($gallery->path as $imgFile) {
                             $gallery = new GoodsGallery();
                             $gallery->goods_id = $model->id;
                             $gallery->path = $imgFile;
                             $gallery->save();
+
+                            //添加编号
+                            $goodsCount=GoodsDayCount::findOne(['day'=>date("Ymd",time())]);
+                            if(empty($goodsCount)) {
+                                $goodsCount = new GoodsDayCount();
+                                $goodsCount->day = date("Ymd", time());
+                                $goodsCount->count = 1;
+                                $goodsCount->save();
+                            }else{
+                                $count = $goodsCount->count;
+                                $goodsCount->count=$count+1;
+                                $goodsCount->save();
+                            }
                         }
-
-
                     }
-
                 }
-
                 \Yii::$app->session->setFlash("success", "添加成功");
 
             } else {
@@ -176,4 +211,14 @@ class GoodsController extends \yii\web\Controller
 
     }
 
+
+    //富文本编辑框方法
+    public function actions()
+    {
+        return [
+            'upload' => [
+                'class' => 'kucha\ueditor\UEditorAction',
+            ]
+        ];
+    }
 }
