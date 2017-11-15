@@ -52,7 +52,7 @@ class GoodsController extends \yii\web\Controller
        }
 
         $count = $query->count();
-        $pageSize = 1;
+        $pageSize = 6;
         $page = new Pagination(
             [
                 'pageSize'=>$pageSize,
